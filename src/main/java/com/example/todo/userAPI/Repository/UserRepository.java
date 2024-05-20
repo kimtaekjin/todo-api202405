@@ -4,9 +4,15 @@ import com.example.todo.userAPI.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface UserRepository extends JpaRepository<User,String> {
+import java.util.Optional;
 
-    //이메일 중복 체크
-//@Query("SELECT count(*) FROM User u WHERE u.email =: email")->JPQL
+public interface UserRepository extends JpaRepository<User, String> {
+
+    // 이메일 중복 체크
+//    @Query("SELECT COUNT(*) FROM User u WHERE u.email =: email") -> JPQL
     boolean existsByEmail(String email);
+
+    Optional findByEmail(String email);
+
+
 }
