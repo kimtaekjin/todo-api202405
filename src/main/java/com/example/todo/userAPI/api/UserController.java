@@ -1,5 +1,6 @@
 package com.example.todo.userAPI.api;
 
+import com.example.todo.userAPI.dto.LoginReponseDTO;
 import com.example.todo.userAPI.dto.request.LoginRequstDTO;
 import com.example.todo.userAPI.dto.request.UserSignUpRequestDTO;
 import com.example.todo.userAPI.dto.response.UserSignUpResponseDTO;
@@ -73,9 +74,10 @@ public class UserController {
         if (response != null) return response;
 
         try {
-            String authenticate = userService.authenticate(dto);
-            return ResponseEntity.ok().body(authenticate);
+            LoginReponseDTO reponseDTO = userService.authenticate(dto);
+            return ResponseEntity.ok().body(reponseDTO);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 

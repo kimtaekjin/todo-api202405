@@ -1,6 +1,7 @@
 package com.example.todo.todoapi.entity;
 
 
+import com.example.todo.userAPI.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,6 +29,9 @@ public class Todo {
     @CreationTimestamp
     private LocalDateTime createDate; //등록 시간
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 }
