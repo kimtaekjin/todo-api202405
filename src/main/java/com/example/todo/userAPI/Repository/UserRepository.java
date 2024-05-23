@@ -2,7 +2,6 @@ package com.example.todo.userAPI.Repository;
 
 import com.example.todo.userAPI.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 //    @Query("SELECT COUNT(*) FROM User u WHERE u.email =: email") -> JPQL
     boolean existsByEmail(String email);
 
-    Optional findByEmail(String email);
-
+    Optional<User> findByEmail(String email);
 
 }

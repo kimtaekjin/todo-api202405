@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginRequstDTO {
+public class LoginRequestDTO {
 
 
     @NotBlank
@@ -18,4 +18,7 @@ public class LoginRequstDTO {
     private String email;
     @NotBlank
     private String password;
+
+
+
 }

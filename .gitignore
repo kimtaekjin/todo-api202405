@@ -5,10 +5,13 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
+*.yml
+
+.idea/**
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
-
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
@@ -195,10 +198,3 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,intellij,windows
-# spring boot devtools 설정
-
-1. 파일 -> 설정
-2. 빌드, 실행, 배포 탭 클릭 -> 컴파일러 탭 클릭
-3. 자동으로 프로젝트 빌드 체크
-4. 왼쪽 탭에 고급 설정 클릭
-5. 컴파일러 메뉴 -> 프로젝트가 실행중인 ~~~ auto-make 클릭
