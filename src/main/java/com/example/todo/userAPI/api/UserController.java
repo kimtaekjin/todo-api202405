@@ -8,6 +8,7 @@ import com.example.todo.userAPI.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -96,7 +98,7 @@ public class UserController {
     @PutMapping("/promote")
     // 권한 검사 (해당 권한이 아니라면 인가처리 거부 -> 403 상태 리턴)
     // 메서드 호출 전에 검사 -> 요청 당시 토큰에 있는 user 정보가 ROLE_COMMON이라는 권한을 가지고 있는지를 검사.
-    @PreAuthorize("hasRole('ROLE_COMMON')")
+    // @PreAuthorize("hasRole('ROLE_COMMON')")
     public ResponseEntity<?> promote(
             @AuthenticationPrincipal TokenUserInfo userInfo
     ) {
@@ -114,6 +116,7 @@ public class UserController {
         try {
             // 1. 프로필 사진의 경로부터 얻어야 한다.
             String filePath = userService.findProfilePath(userInfo.getUserId());
+            log.info("filePath: {}", filePath);
 
             // 2. 얻어낸 파일 경로를 통해 실제 파일 데이터를 로드하기.
             File profileFile = new File(filePath);
@@ -121,6 +124,11 @@ public class UserController {
             // 모든 사용자가 프로필 사진을 가지는 것은 아니다. -> 프사를 등록하지 않은 사람은 해당 경로가 존재하지 않을 것.
             // 만약 존재하지 않는 경로라면 클라이언트로 404 status를 리턴.
             if (!profileFile.exists()) {
+                // 만약 조회한 파일 경로가 http://~~~로 시작한다면 -> 카카오 로그인 한 사람이다!
+                // 카카오 로그인 프로필은 변환 과정 없이 바로 이미지 url을 리턴해 주시면 됩니다.
+                if (filePath.startsWith("http://")) {
+                    return ResponseEntity.ok().body(filePath);
+                }
                 return ResponseEntity.notFound().build();
             }
 
@@ -147,10 +155,34 @@ public class UserController {
     @GetMapping("/kakaologin")
     public ResponseEntity<?> kakaoLogin(String code) {
         log.info("/api/auth/kakaoLogin - GET! code: {}", code);
-        userService.kakaoService(code);
+        LoginResponseDTO responseDTO = userService.kakaoService(code);
 
-
+        return ResponseEntity.ok().body(responseDTO);
     }
+
+    // 로그아웃 처리
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
+        log.info("/api/auth/logout - GET! - user: {}", userInfo.getEmail());
+
+        String result = userService.logout(userInfo);
+        return ResponseEntity.ok().body(result);
+    }
+
+    // 리프레쉬 토큰을 활용한 액세스 토큰 재발급 요청
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> tokenRequest) {
+        log.info("/api/auth/refresh: POST! - tokenRequest: {}", tokenRequest);
+        String renewalAccessToken = userService.renewalAccessToken(tokenRequest);
+        if (renewalAccessToken != null) {
+            return ResponseEntity.ok().body(Map.of("accessToken", renewalAccessToken));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+    }
+
+
 
     private MediaType findExtensionAndGetMediaType(String filePath) {
 

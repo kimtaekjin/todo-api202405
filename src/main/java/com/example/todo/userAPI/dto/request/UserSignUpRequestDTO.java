@@ -1,6 +1,5 @@
 package com.example.todo.userAPI.dto.request;
-
-import com.example.todo.userapi.entity.User;
+import com.example.todo.userAPI.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
